@@ -29,9 +29,9 @@ struct TNStates {
 fn index(connections: &State<TNStates>) -> &'static str {
     connections.nats.publish("foo", "Hello World!").expect("Failed to publish");
     let connection = &mut database::establish_connection();
-    let new_user = user::User::create(connection, "test".to_string(), "test".to_string());
+    let new_user = user::Person::create(connection, "test".to_string(), "test".to_string());
     println!("New user: {:?}", new_user);
-    let check_user = user::User::get(connection, new_user.uuid);
+    let check_user = user::Person::get(connection, new_user.uuid);
     println!("Check user: {:?}", check_user);
     "Hello, world!"
 }
