@@ -1,8 +1,8 @@
 use nats::Connection;
+mod user;
 use rocket::*;
 
 pub mod schema;
-mod user;
 mod database;
 
 fn setup_logger() -> Result<(), fern::InitError> {
@@ -22,7 +22,7 @@ fn setup_logger() -> Result<(), fern::InitError> {
     Ok(())
 }
 
-struct TNStates {
+pub struct TNStates {
     nats: Connection,
 }
 #[get("/")]
@@ -41,5 +41,5 @@ fn rocket() -> _ {
     setup_logger().expect("Failed to setup logger");
     let nc: nats::Connection = nats::connect("demo.nats.io").expect("Failed to connect to NATS");
     let connections = TNStates { nats: nc };
-    rocket::build().mount("/", routes![index]).manage(connections)
+    rocket::build().mount("/", routes![index]).mount("/person", routes![user::register]).manage(connections)
 }
