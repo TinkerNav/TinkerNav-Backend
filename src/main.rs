@@ -1,12 +1,5 @@
-#[macro_use] extern crate rocket;
-extern crate fern;
-#[macro_use]
-extern crate log;
-
-extern crate chrono;
-
-use rocket::State;
 use nats::Connection;
+use rocket::*;
 
 fn setup_logger() -> Result<(), fern::InitError> {
     fern::Dispatch::new()
@@ -19,15 +12,14 @@ fn setup_logger() -> Result<(), fern::InitError> {
                 message
             ))
         })
-        .level(log::LevelFilter::Debug)
+        .level(::log::LevelFilter::Debug)
         .chain(std::io::stdout())
         .apply()?;
     Ok(())
 }
 
-
 struct TNStates {
-    nats: Connection
+    nats: Connection,
 }
 #[get("/")]
 fn index(connections: &State<TNStates>) -> &'static str {
@@ -38,7 +30,7 @@ fn index(connections: &State<TNStates>) -> &'static str {
 #[launch]
 fn rocket() -> _ {
     setup_logger().expect("Failed to setup logger");
-    let nc : nats::Connection= nats::connect("demo.nats.io").expect("Failed to connect to NATS");
+    let nc: nats::Connection = nats::connect("demo.nats.io").expect("Failed to connect to NATS");
     let connections = TNStates { nats: nc };
     rocket::build().mount("/", routes![index]).manage(connections)
 }
