@@ -24,10 +24,6 @@ fn setup_logger() -> Result<(), fern::InitError> {
 
 #[get("/")]
 fn index(connections: &State<TNStates>) -> &'static str {
-    connections.nats.subscribe("foo.*").unwrap().with_handler(move |msg| {
-        println!("HHHHHHHHHHHHHHHHHHHHHH Received {}", &msg);
-        Ok(())
-    });
     connections.nats.publish("foo.no", "JSON").expect("Failed to publish");
     "Hello, world!"
 }
