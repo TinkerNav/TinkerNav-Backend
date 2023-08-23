@@ -1,8 +1,8 @@
 mod states;
-use states::TNStates;
+mod bots;
 mod user;
+use states::TNStates;
 use rocket::*;
-use tinker_nav_backend::bots;
 
 pub mod schema;
 
@@ -36,5 +36,6 @@ fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index])
         .mount("/person", routes![user::register])
+        .mount("/bot", routes![bots::test])
         .manage(states)
 }
