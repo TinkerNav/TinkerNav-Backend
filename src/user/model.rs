@@ -1,3 +1,4 @@
+extern crate bcrypt;
 use crate::schema::persons;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
@@ -13,8 +14,8 @@ pub struct Person {
 }
 
 impl Person {
-    fn hash_password(password: &String) -> &String {
-        password
+    fn hash_password(password: &String) -> String {
+        bcrypt::hash(password, bcrypt::DEFAULT_COST).unwrap()
     }
 
     pub fn new(username: String, password_hash: String, uuid: Uuid) -> Person {
