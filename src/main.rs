@@ -1,5 +1,6 @@
 use nats::Connection;
 use rocket::*;
+use tinker_nav_backend::bots;
 
 fn setup_logger() -> Result<(), fern::InitError> {
     fern::Dispatch::new()
@@ -32,5 +33,7 @@ fn rocket() -> _ {
     setup_logger().expect("Failed to setup logger");
     let nc: nats::Connection = nats::connect("demo.nats.io").expect("Failed to connect to NATS");
     let connections = TNStates { nats: nc };
-    rocket::build().mount("/", routes![index]).manage(connections)
+    rocket::build().mount("/", routes![index])
+    .mount("/", routes![bots::router::test])
+    .manage(connections)
 }
