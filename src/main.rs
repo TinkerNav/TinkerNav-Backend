@@ -1,9 +1,9 @@
-use nats::Connection;
+mod states;
+use states::TNStates;
 mod user;
 use rocket::*;
 
 pub mod schema;
-mod database;
 
 fn setup_logger() -> Result<(), fern::InitError> {
     fern::Dispatch::new()
@@ -22,24 +22,22 @@ fn setup_logger() -> Result<(), fern::InitError> {
     Ok(())
 }
 
-pub struct TNStates {
-    nats: Connection,
-}
 #[get("/")]
 fn index(connections: &State<TNStates>) -> &'static str {
-    connections.nats.publish("foo", "Hello World!").expect("Failed to publish");
-    let connection = &mut database::establish_connection();
-    let new_user = user::Person::create(connection, "test".to_string(), "test".to_string());
-    println!("New user: {:?}", new_user);
-    let check_user = user::Person::get(connection, new_user.uuid);
-    println!("Check user: {:?}", check_user);
+    connections.nats.subscribe("foo.*").unwrap().with_handler(move |msg| {
+        println!("HHHHHHHHHHHHHHHHHHHHHH Received {}", &msg);
+        Ok(())
+    });
+    connections.nats.publish("foo.no", "JSON").expect("Failed to publish");
     "Hello, world!"
 }
 
 #[launch]
 fn rocket() -> _ {
     setup_logger().expect("Failed to setup logger");
-    let nc: nats::Connection = nats::connect("demo.nats.io").expect("Failed to connect to NATS");
-    let connections = TNStates { nats: nc };
-    rocket::build().mount("/", routes![index]).mount("/person", routes![user::register]).manage(connections)
+    let states = TNStates::new();
+    rocket::build()
+        .mount("/", routes![index])
+        .mount("/person", routes![user::register])
+        .manage(states)
 }

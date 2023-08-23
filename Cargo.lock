@@ -405,6 +405,7 @@ dependencies = [
  "diesel_derives 2.1.0",
  "itoa",
  "pq-sys",
+ "r2d2",
  "uuid",
 ]
 

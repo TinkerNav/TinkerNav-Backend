@@ -24,7 +24,8 @@ impl Person {
     pub fn create(conn: &mut PgConnection, username: String, password: String) -> Person {
         let password_hash = Person::hash_password(&password);
         let user_uuid = Uuid::new_v4();
-        let new_user = Person { username, password_hash: password_hash.to_string(), uuid: user_uuid };
+        let new_user =
+            Person { username, password_hash: password_hash.to_string(), uuid: user_uuid };
         diesel::insert_into(persons::table)
             .values(&new_user)
             .get_result(conn)

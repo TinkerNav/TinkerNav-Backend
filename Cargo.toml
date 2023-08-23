@@ -12,7 +12,7 @@ nats = "0.24.0"
 log = "0.4"
 fern = "0.5"
 chrono = "0.4.26"
-diesel = { version = "2.1.0", features = ["postgres", "uuid"] }
+diesel = { version = "2.1.0", features = ["postgres", "uuid", "r2d2"] }
 uuid = { version = "1.4.0", features = ["v4", "fast-rng", "macro-diagnostics"] }
 dotenv = "0.15.0"
 r2d2-diesel = "1.0.0"
