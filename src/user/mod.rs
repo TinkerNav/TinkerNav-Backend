@@ -1,19 +1,21 @@
-pub struct User {
-    pub id: i32,
-    pub name: String,
-    pub email: String,
-    pub password: String,
+mod model;
+use crate::TNStates;
+use rocket::*;
+
+pub use model::Person;
+
+use rocket::serde::{json::Json, Serialize};
+
+#[derive(Serialize)]
+#[serde(crate = "rocket::serde")]
+pub struct PersonResponse {
+    username: String,
+    uuid: String,
 }
 
-impl User {
-    pub fn new(id: i32, name: String, email: String, password: String) -> User {
-        User {
-            id,
-            name,
-            email,
-            password,
-        }
-    }
+#[post("/registry")]
+pub fn register(state: &State<TNStates>) -> Json<PersonResponse> {
+    let connection = &mut state.pg_pool.get().unwrap();
+    let new_user = model::Person::create(connection, "test".to_string(), "test".to_string());
+    Json(PersonResponse { username: new_user.username, uuid: new_user.uuid.to_string() })
 }
-
-
