@@ -2,8 +2,8 @@ mod states;
 mod bots;
 mod type_sys;
 mod user;
-use states::TNStates;
 use rocket::*;
+use states::TNStates;
 
 pub mod schema;
 
