@@ -15,13 +15,13 @@ pub struct PersonResponse {
 }
 
 #[derive(FromForm)]
-pub struct PersonForm {
+pub struct PersonLoginForm {
     username: String,
     password: String,
 }
 
 #[post("/registry", data = "<form>")]
-pub fn register(state: &State<TNStates>, form: Form<PersonForm>) -> Json<PersonResponse> {
+pub fn register(state: &State<TNStates>, form: Form<PersonLoginForm>) -> Json<PersonResponse> {
     // Register new user
     let connection = &mut state.pg_pool.get().unwrap();
     let username = &form.username;
