@@ -14,7 +14,7 @@ pub struct Person {
 }
 
 impl Person {
-    fn hash_password(password: &String) -> String {
+    fn hash_password(password: &str) -> String {
         bcrypt::hash(password, bcrypt::DEFAULT_COST).unwrap()
     }
 
@@ -22,9 +22,10 @@ impl Person {
         Person { username, password_hash, uuid }
     }
 
-    pub fn create(conn: &mut PgConnection, username: String, password: String) -> Person {
-        let password_hash = Person::hash_password(&password);
+    pub fn create(conn: &mut PgConnection, username: &str, password: &str) -> Person {
+        let password_hash = Person::hash_password(password);
         let user_uuid = Uuid::new_v4();
+        let username = username.to_string();
         let new_user =
             Person { username, password_hash: password_hash.to_string(), uuid: user_uuid };
         diesel::insert_into(persons::table)
