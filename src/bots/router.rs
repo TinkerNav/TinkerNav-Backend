@@ -1,6 +1,6 @@
+use rocket::post;
 use rocket::serde::json::Json;
 use serde::Deserialize;
-use rocket::post;
 
 #[derive(Debug, PartialEq, Eq, Deserialize)]
 pub struct TestJson {
