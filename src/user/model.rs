@@ -63,7 +63,7 @@ impl Person {
         }
         user
     }
-    
+
     pub fn current_user(conn: &mut PgConnection, cookies: &CookieJar<'_>) -> Person {
         let user_uuid = cookies
             .get_private("uuid")
@@ -74,5 +74,3 @@ impl Person {
         Person::find(conn, user_uuid)
     }
 }
-
-

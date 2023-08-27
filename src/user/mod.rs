@@ -32,7 +32,9 @@ pub fn register(state: &State<TNStates>, form: Form<PersonLoginForm>) -> Json<Pe
 }
 
 #[post("/login", data = "<form>")]
-pub fn login(state: &State<TNStates>, form: Form<PersonLoginForm>, cookies: &CookieJar<'_>) -> Json<PersonResponse> {
+pub fn login(
+    state: &State<TNStates>, form: Form<PersonLoginForm>, cookies: &CookieJar<'_>,
+) -> Json<PersonResponse> {
     // Login user
     let connection = &mut state.pg_pool.get().unwrap();
     let username = &form.username;
