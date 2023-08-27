@@ -18,6 +18,18 @@ impl Person {
         bcrypt::hash(password, bcrypt::DEFAULT_COST).unwrap()
     }
 
+    fn verify_password(&self, password: &str) -> bool {
+        let hash = &self.password_hash;
+        bcrypt::verify(password, hash).unwrap()
+    }
+
+    pub fn find_username(conn: &mut PgConnection, username: &str) -> Person {
+        persons::table
+            .filter(persons::username.eq(username))
+            .first(conn)
+            .expect("Error getting user")
+    }
+
     pub fn new(username: String, password_hash: String, uuid: Uuid) -> Person {
         Person { username, password_hash, uuid }
     }
@@ -34,11 +46,21 @@ impl Person {
             .expect("Error saving new user")
     }
 
-    pub fn get(conn: &mut PgConnection, user_uuid: Uuid) -> Person {
+    pub fn find(conn: &mut PgConnection, user_uuid: Uuid) -> Person {
         persons::table.find(user_uuid).first(conn).expect("Error getting user")
     }
 
     pub fn delete(conn: &mut PgConnection, user_uuid: Uuid) -> bool {
         diesel::delete(persons::table.find(user_uuid)).execute(conn).is_ok()
     }
+
+    pub fn login(conn: &mut PgConnection, username: &str, password: &str) -> Person {
+        let user = Person::find_username(conn, username);
+        if !user.verify_password(password) {
+            panic!("Wrong password");
+        }
+        user
+    }
 }
+
+

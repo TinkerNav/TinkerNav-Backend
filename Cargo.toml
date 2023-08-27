@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rocket = { version = "=0.5.0-rc.3", features = ["json"] }
+rocket = { version = "=0.5.0-rc.3", features = ["json", "secrets"] }
 bcrypt = "0.15"
 rocket_codegen = "=0.5.0-rc.3"
 nats = "0.24.0"
