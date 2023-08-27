@@ -4,6 +4,8 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use uuid::Uuid;
 
+use rocket::http::{Cookie, CookieJar};
+
 #[derive(Queryable, Selectable, Debug, Insertable)]
 #[diesel(table_name = crate::schema::persons)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -60,6 +62,16 @@ impl Person {
             panic!("Wrong password");
         }
         user
+    }
+    
+    pub fn current_user(conn: &mut PgConnection, cookies: &CookieJar<'_>) -> Person {
+        let user_uuid = cookies
+            .get_private("uuid")
+            .expect("No uuid cookie found")
+            .value()
+            .parse::<Uuid>()
+            .expect("Invalid uuid cookie");
+        Person::find(conn, user_uuid)
     }
 }
 

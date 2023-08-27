@@ -41,3 +41,10 @@ pub fn login(state: &State<TNStates>, form: Form<PersonLoginForm>, cookies: &Coo
     cookies.add_private(Cookie::new("uuid", user.uuid.to_string()));
     Json(PersonResponse { username: user.username, uuid: user.uuid.to_string() })
 }
+
+#[post("/logout")]
+pub fn logout(cookies: &CookieJar<'_>) -> &'static str {
+    // Logout user
+    cookies.remove_private(Cookie::named("uuid"));
+    "Logged out"
+}
