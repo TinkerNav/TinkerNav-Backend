@@ -2,6 +2,8 @@ mod states;
 mod bots;
 mod type_sys;
 mod user;
+mod config;
+use config::Config;
 use rocket::*;
 use states::TNStates;
 
@@ -32,9 +34,16 @@ fn index(connections: &State<TNStates>) -> &'static str {
 
 #[launch]
 fn rocket() -> _ {
+    let config = Config::get();
+    let figment = rocket::Config::figment()
+        .merge(("address", config.host))
+        .merge(("port", config.port))
+        .merge(("workers", config.workers))
+        .merge(("secret_key", config.secret_key));
+
     setup_logger().expect("Failed to setup logger");
     let states = TNStates::new();
-    rocket::build()
+    rocket::custom(figment)
         .mount("/", routes![index])
         .mount("/person", routes![user::register])
         .mount("/bot", routes![bots::test])
