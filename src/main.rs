@@ -45,7 +45,7 @@ fn rocket() -> _ {
     let states = TNStates::new();
     rocket::custom(figment)
         .mount("/", routes![index])
-        .mount("/person", routes![user::register])
+        .mount("/person", routes![user::register, user::login, user::logout])
         .mount("/bot", routes![bots::test])
         .manage(states)
 }
