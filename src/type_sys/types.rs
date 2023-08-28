@@ -1,18 +1,17 @@
 use chrono;
-use chrono::Local;
 use serde::Deserialize;
 use serde::Serialize;
 use uuid::Uuid;
 
 #[allow(dead_code)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 enum MessageType {
     Image,
     Text,
 }
 
 #[allow(dead_code)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 enum Role {
     Bot,
     Person,
@@ -20,7 +19,7 @@ enum Role {
 }
 
 #[allow(dead_code)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 enum Event {
     Start,
     Content,
@@ -28,32 +27,38 @@ enum Event {
     Error,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Message {
     message_type: MessageType,
     content: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct User {
     role: Role,
     uuid: Uuid,
 }
 
-#[derive(Serialize, Deserialize)]
-pub enum MessageProtocol {
-    PersonRequest {
-        to: User,
-        message: Message,
-    },
-
-    BotReceive {
-        from: User,
-        message: Message,
-        message_uuid: Uuid,
-        timestamp: chrono::DateTime<Local>,
-    },
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PersonRequest{
+    to: User,
+    message: Message,
 }
+
+
+// pub enum MessageProtocol {
+//     PersonRequest {
+//         to: User,
+//         message: Message,
+//     },
+
+//     BotReceive {
+//         from: User,
+//         message: Message,
+//         message_uuid: Uuid,
+//         timestamp: chrono::DateTime<Local>,
+//     },
+// }
 
 pub enum BotResponseType {
     Start,

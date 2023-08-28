@@ -1,16 +1,53 @@
 use rocket::post;
 use rocket::serde::json::Json;
 use serde::Deserialize;
+use crate::type_sys::types::PersonRequest;
 
-#[derive(Debug, PartialEq, Eq, Deserialize)]
-pub struct TestJson {
-    pub id: i32,
-    pub name: String,
-    pub email: String,
-    pub password: String,
+#[derive(Deserialize, Debug)]
+pub struct Embed {
+
 }
 
-#[post("/test", format = "json", data = "<user_input>")]
-pub fn test(user_input: Json<TestJson>) -> String {
-    format!("print test {:?}", user_input)
+#[derive(Deserialize, Debug)]
+#[allow(dead_code)]
+pub struct Attachment {
+    filename: String,
+    id: i128,
+    proxy_url: String, 
+    size: i64,
+    url: String,
+    spoiler: bool,
+    height: i32,
+    width: i32,
+    content_type: String
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(dead_code)]
+pub struct Action {
+    custom_id: String,
+    label: String
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(dead_code)]
+pub struct MidjourneyCallbackData {
+    #[serde(rename = "type")]
+    event_type: String,
+    id: i128,
+    content: String,
+    attachments: Vec<Attachment>,
+    actions: Vec<Action>,
+    embeds: Vec<Embed>,
+    trigger_id: String
+}
+
+#[post("/midjourney", format = "json", data = "<user_request>")]
+pub fn midjourney(user_request: Json<PersonRequest>) -> String {
+    format!("print test {:?}", user_request)
+}
+
+#[post("/midjourney_callback", format = "json", data = "<callback_data>")]
+pub fn midjourney_callback(callback_data: Json<MidjourneyCallbackData>) -> String {
+    format!("callback received {:?}", callback_data)
 }

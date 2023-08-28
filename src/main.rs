@@ -46,6 +46,6 @@ fn rocket() -> _ {
     rocket::custom(figment)
         .mount("/", routes![index])
         .mount("/person", routes![user::register, user::login, user::logout])
-        .mount("/bot", routes![bots::test])
+        .mount("/bot", routes![bots::midjourney, bots::midjourney_callback])
         .manage(states)
 }
