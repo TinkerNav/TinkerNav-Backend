@@ -1,9 +1,9 @@
 mod database_connection;
 mod nats_connection;
+use crate::config::Config;
 pub use database_connection::{establish_connection_pool, PgPool};
 use nats::Connection;
 pub use nats_connection::establish_connection;
-use crate::config::Config;
 
 pub struct TNStates {
     pub nats: Connection,

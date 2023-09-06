@@ -55,9 +55,7 @@ impl Person {
         diesel::delete(persons::table.find(user_uuid)).execute(conn).is_ok()
     }
 
-    pub fn login(
-        conn: &mut PgConnection, username: &str, password: &str,
-    ) -> AuthResult<Person> {
+    pub fn login(conn: &mut PgConnection, username: &str, password: &str) -> AuthResult<Person> {
         let user = Person::find_username(conn, username);
         if !user.verify_password(password) {
             return Err(AuthError::InvalidUsernameOrPassword);

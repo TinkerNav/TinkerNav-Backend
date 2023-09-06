@@ -31,7 +31,8 @@ impl Config {
             port: std::env::var("PORT").expect("PORT not set").parse::<u16>().unwrap(),
             postgres_url: std::env::var("POSTGRES_URL").expect("POSTGRES_URL not set"),
             postgres_user: std::env::var("POSTGRES_USER").expect("POSTGRES_USER not set"),
-            postgres_password: std::env::var("POSTGRES_PASSWORD").expect("POSTGRES_PASSWORD not set"),
+            postgres_password: std::env::var("POSTGRES_PASSWORD")
+                .expect("POSTGRES_PASSWORD not set"),
             nats_url: std::env::var("NATS_URL").expect("NATS_URL not set"),
         }
     }

@@ -1,8 +1,12 @@
-use super::utils::{AuthError, AuthResult};
-use actix_web::{error, web::{Form, Data, Json}, HttpResponse, Responder};
-use serde::{Deserialize, Serialize};
 use super::models::Person;
+use super::utils::{AuthError, AuthResult};
 use crate::states::TNStates;
+use actix_web::{
+    error,
+    web::{Data, Form, Json},
+    HttpResponse, Responder,
+};
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 pub struct LoginData {
@@ -32,11 +36,7 @@ pub async fn logout() -> AuthResult<impl Responder> {
 pub async fn register(states: Data<TNStates>) -> AuthResult<impl Responder> {
     let connection = &mut states.pg_pool.get().unwrap();
     let person = Person::create(connection, "admin", "admin");
-    Ok(Json({
-        PersonResponse {
-            username: person.username,
-        }
-    }))
+    Ok(Json({ PersonResponse { username: person.username } }))
 }
 
 pub async fn change_password() -> AuthResult<impl Responder> {
@@ -45,6 +45,3 @@ pub async fn change_password() -> AuthResult<impl Responder> {
     }
     Ok(HttpResponse::Ok().body("Password reset"))
 }
-
-
-
