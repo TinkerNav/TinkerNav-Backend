@@ -35,3 +35,5 @@ impl error::ResponseError for AuthenticationError {
             .body(self.as_str().to_string())
     }
 }
+
+pub type AuthenticationResult<T> = Result<T, AuthenticationError>;

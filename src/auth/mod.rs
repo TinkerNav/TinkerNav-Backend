@@ -1,5 +1,6 @@
 mod login;
 mod utils;
+mod models;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use login::{login, logout};
