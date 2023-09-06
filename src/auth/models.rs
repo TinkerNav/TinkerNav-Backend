@@ -1,9 +1,9 @@
 extern crate bcrypt;
+use super::utils::{AuthenticationError, AuthenticationResult};
 use crate::schema::persons;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use uuid::Uuid;
-use super::utils::{AuthenticationError, AuthenticationResult};
 
 #[derive(Queryable, Selectable, Debug, Insertable)]
 #[diesel(table_name = crate::schema::persons)]
@@ -55,10 +55,12 @@ impl Person {
         diesel::delete(persons::table.find(user_uuid)).execute(conn).is_ok()
     }
 
-    pub fn login(conn: &mut PgConnection, username: &str, password: &str) -> AuthenticationResult<Person> {
+    pub fn login(
+        conn: &mut PgConnection, username: &str, password: &str,
+    ) -> AuthenticationResult<Person> {
         let user = Person::find_username(conn, username);
         if !user.verify_password(password) {
-            return Err(AuthenticationError::InvalidUsernameOrPassword)
+            return Err(AuthenticationError::InvalidUsernameOrPassword);
         }
         Ok(user)
     }
