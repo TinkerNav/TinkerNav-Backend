@@ -1,51 +1,28 @@
-mod states;
-mod bots;
-mod type_sys;
-mod user;
-mod config;
-use config::Config;
-use rocket::*;
-use states::TNStates;
-
-pub mod schema;
-
-fn setup_logger() -> Result<(), fern::InitError> {
-    fern::Dispatch::new()
-        .format(|out, message, record| {
-            out.finish(format_args!(
-                "{}[{}][{}] {}",
-                chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
-                record.target(),
-                record.level(),
-                message
-            ))
-        })
-        .level(::log::LevelFilter::Debug)
-        .chain(std::io::stdout())
-        .apply()?;
-    Ok(())
-}
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 #[get("/")]
-fn index(connections: &State<TNStates>) -> &'static str {
-    connections.nats.publish("foo.no", "JSON").expect("Failed to publish");
-    "Hello, world!"
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
 }
 
-#[launch]
-fn rocket() -> _ {
-    let config = Config::get();
-    let figment = rocket::Config::figment()
-        .merge(("address", config.host))
-        .merge(("port", config.port))
-        .merge(("workers", config.workers))
-        .merge(("secret_key", config.secret_key));
+#[post("/echo")]
+async fn echo(req_body: String) -> impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
 
-    setup_logger().expect("Failed to setup logger");
-    let states = TNStates::new();
-    rocket::custom(figment)
-        .mount("/", routes![index])
-        .mount("/person", routes![user::register, user::login, user::logout])
-        .mount("/bot", routes![bots::test])
-        .manage(states)
+async fn manual_hello() -> impl Responder {
+    HttpResponse::Ok().body("Hey there!")
+}
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| {
+        App::new()
+            .service(hello)
+            .service(echo)
+            .route("/hey", web::get().to(manual_hello))
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }
