@@ -4,8 +4,19 @@ use serde::Deserialize;
 use crate::type_sys::types::PersonRequest;
 
 #[derive(Deserialize, Debug)]
-pub struct Embed {
+#[allow(dead_code)]
+pub struct EmbedImage {
+    url: String,
+    proxy_url: String
+}
 
+#[derive(Deserialize, Debug)]
+#[allow(dead_code)]
+pub struct Embed {
+    #[serde(rename = "type")]
+    embed_type: String,
+    description: String,
+    image: EmbedImage
 }
 
 #[derive(Deserialize, Debug)]
