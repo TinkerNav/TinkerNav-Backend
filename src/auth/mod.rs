@@ -2,9 +2,10 @@ mod login;
 mod utils;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use login::login;
+use login::{login, logout};
 
-pub fn config(cfg: &mut web::ServiceConfig) {
-    web::resource("/login")
-        .route(web::post().to(login));
+pub fn scope() -> actix_web::Scope {
+    web::scope("/auth")
+        .service(web::resource("/login").route(web::post().to(login)))
+        .service(web::resource("/logout").route(web::post().to(logout)))
 }

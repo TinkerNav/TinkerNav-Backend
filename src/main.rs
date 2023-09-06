@@ -1,6 +1,5 @@
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 mod auth;
-use auth::config;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -22,8 +21,8 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .service(hello)
             .service(echo)
-            .configure(config)
             .route("/hey", web::get().to(manual_hello))
+            .service(auth::scope())
     })
     .bind(("127.0.0.1", 8080))?
     .run()
