@@ -1,6 +1,8 @@
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 mod auth;
 mod schema;
+mod config;
+mod states;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -18,11 +20,16 @@ async fn manual_hello() -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
+    let config = config::Config::get();
+    let tn_states = states::TNStates::new(&config);
+
+    let connection = web::Data::new(tn_states);
+    HttpServer::new(move || {
         App::new()
             .service(hello)
             .service(echo)
             .route("/hey", web::get().to(manual_hello))
+            .app_data(connection.clone())
             .service(auth::scope())
     })
     .bind(("127.0.0.1", 8080))?
