@@ -1,5 +1,5 @@
 extern crate bcrypt;
-use super::utils::{AuthenticationError, AuthenticationResult};
+use super::utils::{AuthError, AuthResult};
 use crate::schema::persons;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
@@ -57,10 +57,10 @@ impl Person {
 
     pub fn login(
         conn: &mut PgConnection, username: &str, password: &str,
-    ) -> AuthenticationResult<Person> {
+    ) -> AuthResult<Person> {
         let user = Person::find_username(conn, username);
         if !user.verify_password(password) {
-            return Err(AuthenticationError::InvalidUsernameOrPassword);
+            return Err(AuthError::InvalidUsernameOrPassword);
         }
         Ok(user)
     }

@@ -7,25 +7,25 @@ use actix_web::{
 use derive_more::{Display, Error};
 
 #[derive(Debug, Display, Error)]
-pub enum AuthenticationError {
+pub enum AuthError {
     InvalidUsernameOrPassword,
     InvalidToken,
 }
 
-impl AuthenticationError {
+impl AuthError {
     pub fn as_str(&self) -> &str {
         match *self {
-            AuthenticationError::InvalidUsernameOrPassword => "Invalid username or password",
-            AuthenticationError::InvalidToken => "Invalid token",
+            AuthError::InvalidUsernameOrPassword => "Invalid username or password",
+            AuthError::InvalidToken => "Invalid token",
         }
     }
 }
 
-impl error::ResponseError for AuthenticationError {
+impl error::ResponseError for AuthError {
     fn status_code(&self) -> StatusCode {
         match *self {
-            AuthenticationError::InvalidUsernameOrPassword => StatusCode::UNAUTHORIZED,
-            AuthenticationError::InvalidToken => StatusCode::UNAUTHORIZED,
+            AuthError::InvalidUsernameOrPassword => StatusCode::UNAUTHORIZED,
+            AuthError::InvalidToken => StatusCode::UNAUTHORIZED,
         }
     }
 
@@ -36,4 +36,4 @@ impl error::ResponseError for AuthenticationError {
     }
 }
 
-pub type AuthenticationResult<T> = Result<T, AuthenticationError>;
+pub type AuthResult<T> = Result<T, AuthError>;
