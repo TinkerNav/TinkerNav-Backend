@@ -39,12 +39,14 @@ pub async fn logout() -> AuthResult<impl Responder> {
     Ok(HttpResponse::Ok().body("Logged out"))
 }
 
-pub async fn register(states: Data<TNStates>, Form(register_data): Form<RegisterData>) -> AuthResult<impl Responder> {
-    let connection = &mut states.pg_pool.lock().unwrap().get().unwrap();
+pub async fn register(
+    states: Data<TNStates>, Form(register_data): Form<RegisterData>,
+) -> AuthResult<impl Responder> {
+    let connection = &mut states.get_db_pool().get().unwrap();
     let username = register_data.username;
     let password = register_data.password;
     let person = Person::create(connection, &username, &password);
-    Ok(Json({ PersonResponse { username: person.username } }))
+    Ok(Json(PersonResponse { username: person.username }))
 }
 
 pub async fn change_password() -> AuthResult<impl Responder> {

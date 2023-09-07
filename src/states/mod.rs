@@ -8,13 +8,17 @@ use std::sync::Mutex;
 
 pub struct TNStates {
     pub nats: Mutex<Connection>,
-    pub pg_pool: Mutex<PgPool>,
+    pg_pool: PgPool,
 }
 
 impl TNStates {
     pub fn new(config: &Config) -> TNStates {
         let nc = Mutex::new(nats_connection::establish_connection(config));
-        let pg_pool = Mutex::new(database_connection::establish_connection_pool(config));
+        let pg_pool = database_connection::establish_connection_pool(config);
         TNStates { nats: nc, pg_pool }
+    }
+
+    pub fn get_db_pool(&self) -> PgPool {
+        self.pg_pool.clone()
     }
 }

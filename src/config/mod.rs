@@ -2,9 +2,6 @@ pub struct Config {
     pub host: String,
     pub port: u16,
     pub postgres_url: String,
-    pub postgres_user: String,
-    pub postgres_password: String,
-
     pub nats_url: String,
 }
 
@@ -18,9 +15,7 @@ impl Config {
         Config {
             host: "127.0.0.1".to_string(),
             port: 8080,
-            postgres_url: "localhost:5432".to_string(),
-            postgres_user: "postgres".to_string(),
-            postgres_password: "postgres".to_string(),
+            postgres_url: "postgres://postgres:changeme@localhost:5432".to_string(),
             nats_url: "localhost:4222".to_string(),
         }
     }
@@ -30,9 +25,6 @@ impl Config {
             host: std::env::var("HOST").expect("HOST not set"),
             port: std::env::var("PORT").expect("PORT not set").parse::<u16>().unwrap(),
             postgres_url: std::env::var("POSTGRES_URL").expect("POSTGRES_URL not set"),
-            postgres_user: std::env::var("POSTGRES_USER").expect("POSTGRES_USER not set"),
-            postgres_password: std::env::var("POSTGRES_PASSWORD")
-                .expect("POSTGRES_PASSWORD not set"),
             nats_url: std::env::var("NATS_URL").expect("NATS_URL not set"),
         }
     }
