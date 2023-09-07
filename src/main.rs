@@ -32,7 +32,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(connection.clone())
             .service(auth::scope())
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind((config.host, config.port))?
     .run()
     .await
 }

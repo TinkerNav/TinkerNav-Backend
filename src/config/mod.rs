@@ -18,10 +18,10 @@ impl Config {
         Config {
             host: "127.0.0.1".to_string(),
             port: 8080,
-            postgres_url: "postgres:5432".to_string(),
+            postgres_url: "localhost:5432".to_string(),
             postgres_user: "postgres".to_string(),
             postgres_password: "postgres".to_string(),
-            nats_url: "nats://".to_string(),
+            nats_url: "localhost:4222".to_string(),
         }
     }
 
