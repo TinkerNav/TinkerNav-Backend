@@ -1,4 +1,5 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
+use env_logger;
 mod auth;
 mod schema;
 mod config;
@@ -24,8 +25,11 @@ async fn main() -> std::io::Result<()> {
     let tn_states = states::TNStates::new(&config);
 
     let connection = web::Data::new(tn_states);
+    // access logs are printed with the INFO level so ensure it is enabled by default
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     HttpServer::new(move || {
         App::new()
+            .wrap(Logger::default())
             .service(hello)
             .service(echo)
             .route("/hey", web::get().to(manual_hello))

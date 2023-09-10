@@ -1,7 +1,8 @@
-use super::models::Person;
 use super::errors::{AuthError, AuthResult};
+use super::models::Person;
 use crate::states::TNStates;
 use actix_web::{
+    cookie::{Cookie, SameSite},
     error,
     web::{Data, Form, Json},
     HttpResponse, Responder,
@@ -25,12 +26,19 @@ pub struct PersonResponse {
     username: String,
 }
 
-pub async fn login(states: Data<TNStates>, Form(login_data): Form<LoginData>) -> AuthResult<impl Responder> {
+pub async fn login(
+    states: Data<TNStates>, Form(login_data): Form<LoginData>,
+) -> AuthResult<impl Responder> {
     let username = login_data.username;
     let password = login_data.password;
     let connection = &mut states.get_db_pool().get().unwrap();
     let person = Person::login(connection, &username, &password)?;
-    Ok(Json(PersonResponse { username: person.username }))
+    let cookie = Cookie::build("token", person.uuid.to_string())
+        .secure(true)
+        .http_only(true)
+        .same_site(SameSite::Strict)
+        .finish();
+    Ok(HttpResponse::Ok().cookie(cookie).body("Logged in"))
 }
 
 pub async fn logout() -> AuthResult<impl Responder> {

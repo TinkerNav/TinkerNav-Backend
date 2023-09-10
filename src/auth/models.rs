@@ -24,11 +24,8 @@ impl Person {
         bcrypt::verify(password, hash).unwrap()
     }
 
-    pub fn find_username(conn: &mut PgConnection, username: &str) -> Person {
-        persons::table
-            .filter(persons::username.eq(username))
-            .first(conn)
-            .expect("Error getting user")
+    pub fn find_username(conn: &mut PgConnection, username: &str) -> Option<Person> {
+        persons::table.filter(persons::username.eq(username)).first(conn).ok()
     }
 
     pub fn new(username: String, password_hash: String, uuid: Uuid) -> Person {
@@ -47,8 +44,8 @@ impl Person {
             .expect("Error saving new user")
     }
 
-    pub fn find(conn: &mut PgConnection, user_uuid: Uuid) -> Person {
-        persons::table.find(user_uuid).first(conn).expect("Error getting user")
+    pub fn find(conn: &mut PgConnection, user_uuid: Uuid) -> Option<Person> {
+        persons::table.find(user_uuid).first(conn).ok()
     }
 
     pub fn delete(conn: &mut PgConnection, user_uuid: Uuid) -> bool {
@@ -56,7 +53,7 @@ impl Person {
     }
 
     pub fn login(conn: &mut PgConnection, username: &str, password: &str) -> AuthResult<Person> {
-        let user = Person::find_username(conn, username);
+        let user = Person::find_username(conn, username).ok_or(AuthError::InvalidUsernameOrPassword)?;
         if !user.verify_password(password) {
             return Err(AuthError::InvalidUsernameOrPassword);
         }
