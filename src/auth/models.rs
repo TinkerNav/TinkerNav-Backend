@@ -71,5 +71,3 @@ impl User for Person {
         self.uuid
     }
 }
-
-

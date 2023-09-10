@@ -4,7 +4,7 @@ mod models;
 mod redir_middleware;
 mod token;
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::web;
 use login::{login, logout, register};
 
 pub fn scope() -> actix_web::Scope {

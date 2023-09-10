@@ -1,10 +1,8 @@
 use super::errors::{AuthError, AuthResult};
-use super::models::{User, Person};
+use super::models::Person;
+use super::token::{generate_cookie, generate_token};
 use crate::states::TNStates;
-use super::token::{generate_token, generate_cookie};
 use actix_web::{
-    cookie::{Cookie, SameSite},
-    error,
     web::{Data, Form, Json},
     HttpResponse, Responder,
 };

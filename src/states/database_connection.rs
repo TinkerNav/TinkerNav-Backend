@@ -3,7 +3,6 @@ use diesel::{
     pg::PgConnection,
     r2d2::{ConnectionManager, Pool},
 };
-use std::env;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 pub fn establish_connection_pool(config: &Config) -> Pool<ConnectionManager<PgConnection>> {
