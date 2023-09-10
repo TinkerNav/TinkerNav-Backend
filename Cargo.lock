@@ -1795,6 +1795,7 @@ dependencies = [
  "env_logger",
  "hmac",
  "jwt",
+ "lazy_static",
  "nats",
  "r2d2",
  "r2d2-diesel",

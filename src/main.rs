@@ -4,6 +4,7 @@ mod auth;
 mod schema;
 mod config;
 mod states;
+use config::CONFIG;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -21,8 +22,7 @@ async fn manual_hello() -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let config = config::Config::get();
-    let tn_states = states::TNStates::new(&config);
+    let tn_states = states::TNStates::new(&CONFIG);
 
     let connection = web::Data::new(tn_states);
     // access logs are printed with the INFO level so ensure it is enabled by default
@@ -36,7 +36,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(connection.clone())
             .service(auth::scope())
     })
-    .bind((config.host, config.port))?
+    .bind((CONFIG.host.clone(), CONFIG.port))?
     .run()
     .await
 }
