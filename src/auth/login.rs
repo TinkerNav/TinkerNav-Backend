@@ -1,5 +1,5 @@
 use super::models::Person;
-use super::utils::{AuthError, AuthResult};
+use super::errors::{AuthError, AuthResult};
 use crate::states::TNStates;
 use actix_web::{
     error,
@@ -25,11 +25,12 @@ pub struct PersonResponse {
     username: String,
 }
 
-pub async fn login(Form(login_data): Form<LoginData>) -> AuthResult<impl Responder> {
-    if login_data.username == "admin" {
-        return Ok(HttpResponse::Ok().body(format!("Welcome {}!", login_data.username)));
-    }
-    Err(AuthError::InvalidUsernameOrPassword)
+pub async fn login(states: Data<TNStates>, Form(login_data): Form<LoginData>) -> AuthResult<impl Responder> {
+    let username = login_data.username;
+    let password = login_data.password;
+    let connection = &mut states.get_db_pool().get().unwrap();
+    let person = Person::login(connection, &username, &password)?;
+    Ok(Json(PersonResponse { username: person.username }))
 }
 
 pub async fn logout() -> AuthResult<impl Responder> {

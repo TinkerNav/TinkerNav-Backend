@@ -1,5 +1,5 @@
 extern crate bcrypt;
-use super::utils::{AuthError, AuthResult};
+use super::errors::{AuthError, AuthResult};
 use crate::schema::persons;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
