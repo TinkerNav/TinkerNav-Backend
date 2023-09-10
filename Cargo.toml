@@ -16,3 +16,6 @@ bcrypt = "0.15"
 uuid = { version = "1.4.0", features = ["v4", "fast-rng", "macro-diagnostics", "serde"] }
 nats = "0.24.0"
 env_logger = "0.10.0"
+hmac = "0.12.1"
+sha2 = "0.10.7"
+jwt = "0.16.0"

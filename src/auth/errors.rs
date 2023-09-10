@@ -12,6 +12,7 @@ pub enum AuthError {
     InvalidToken,
     CannotRegisterUser,
     BcyptError(bcrypt::BcryptError),
+    CannotCreateToken,
 }
 
 impl AuthError {
@@ -21,6 +22,7 @@ impl AuthError {
             AuthError::InvalidToken => "Invalid token",
             AuthError::CannotRegisterUser => "Cannot register user",
             AuthError::BcyptError(_) => "Bcrypt error",
+            AuthError::CannotCreateToken => "Cannot create token",
         }
     }
 }
@@ -32,6 +34,7 @@ impl error::ResponseError for AuthError {
             AuthError::InvalidToken => StatusCode::UNAUTHORIZED,
             AuthError::CannotRegisterUser => StatusCode::INTERNAL_SERVER_ERROR,
             AuthError::BcyptError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AuthError::CannotCreateToken => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 

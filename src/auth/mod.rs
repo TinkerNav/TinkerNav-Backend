@@ -2,7 +2,7 @@ mod login;
 mod errors;
 mod models;
 mod redir_middleware;
-mod cookies;
+mod token;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use login::{login, logout, register};

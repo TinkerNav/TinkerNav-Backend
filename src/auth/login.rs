@@ -1,6 +1,7 @@
 use super::errors::{AuthError, AuthResult};
-use super::models::Person;
+use super::models::{User, Person};
 use crate::states::TNStates;
+use super::token::{generate_token, generate_cookie};
 use actix_web::{
     cookie::{Cookie, SameSite},
     error,
@@ -33,11 +34,8 @@ pub async fn login(
     let password = login_data.password;
     let connection = &mut states.get_db_pool().get().unwrap();
     let person = Person::login(connection, &username, &password)?;
-    let cookie = Cookie::build("token", person.uuid.to_string())
-        .secure(true)
-        .http_only(true)
-        .same_site(SameSite::Strict)
-        .finish();
+    let token = generate_token(&person)?;
+    let cookie = generate_cookie(token);
     Ok(HttpResponse::Ok().cookie(cookie).body("Logged in"))
 }
 

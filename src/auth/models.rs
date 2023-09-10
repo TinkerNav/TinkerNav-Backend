@@ -5,13 +5,17 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use uuid::Uuid;
 
+pub trait User {
+    fn get_uuid(&self) -> Uuid;
+}
+
 #[derive(Queryable, Selectable, Debug, Insertable)]
 #[diesel(table_name = crate::schema::persons)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Person {
     pub username: String,
     password_hash: String,
-    pub uuid: Uuid,
+    uuid: Uuid,
 }
 
 impl Person {
@@ -61,3 +65,11 @@ impl Person {
         Ok(user)
     }
 }
+
+impl User for Person {
+    fn get_uuid(&self) -> Uuid {
+        self.uuid
+    }
+}
+
+
