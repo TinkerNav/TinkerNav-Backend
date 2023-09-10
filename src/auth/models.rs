@@ -15,13 +15,13 @@ pub struct Person {
 }
 
 impl Person {
-    fn hash_password(password: &str) -> String {
-        bcrypt::hash(password, bcrypt::DEFAULT_COST).unwrap()
+    fn hash_password(password: &str) -> AuthResult<String> {
+        bcrypt::hash(password, bcrypt::DEFAULT_COST).map_err(|err| AuthError::BcyptError(err))
     }
 
-    fn verify_password(&self, password: &str) -> bool {
+    fn verify_password(&self, password: &str) -> AuthResult<bool> {
         let hash = &self.password_hash;
-        bcrypt::verify(password, hash).unwrap()
+        bcrypt::verify(password, hash).map_err(|err| AuthError::BcyptError(err))
     }
 
     pub fn find_username(conn: &mut PgConnection, username: &str) -> Option<Person> {
@@ -32,8 +32,8 @@ impl Person {
         Person { username, password_hash, uuid }
     }
 
-    pub fn create(conn: &mut PgConnection, username: &str, password: &str) -> Person {
-        let password_hash = Person::hash_password(password);
+    pub fn create(conn: &mut PgConnection, username: &str, password: &str) -> AuthResult<Person> {
+        let password_hash = Person::hash_password(password)?;
         let user_uuid = Uuid::new_v4();
         let username = username.to_string();
         let new_user =
@@ -41,7 +41,9 @@ impl Person {
         diesel::insert_into(persons::table)
             .values(&new_user)
             .get_result(conn)
-            .expect("Error saving new user")
+            .map_err(|err| {
+                AuthError::CannotRegisterUser
+            })
     }
 
     pub fn find(conn: &mut PgConnection, user_uuid: Uuid) -> Option<Person> {
@@ -54,7 +56,7 @@ impl Person {
 
     pub fn login(conn: &mut PgConnection, username: &str, password: &str) -> AuthResult<Person> {
         let user = Person::find_username(conn, username).ok_or(AuthError::InvalidUsernameOrPassword)?;
-        if !user.verify_password(password) {
+        if !user.verify_password(password)? {
             return Err(AuthError::InvalidUsernameOrPassword);
         }
         Ok(user)

@@ -54,7 +54,7 @@ pub async fn register(
     let connection = &mut states.get_db_pool().get().unwrap();
     let username = register_data.username;
     let password = register_data.password;
-    let person = Person::create(connection, &username, &password);
+    let person = Person::create(connection, &username, &password)?;
     Ok(Json(PersonResponse { username: person.username }))
 }
 

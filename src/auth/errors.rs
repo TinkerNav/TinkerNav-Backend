@@ -10,6 +10,8 @@ use derive_more::{Display, Error};
 pub enum AuthError {
     InvalidUsernameOrPassword,
     InvalidToken,
+    CannotRegisterUser,
+    BcyptError(bcrypt::BcryptError),
 }
 
 impl AuthError {
@@ -17,6 +19,8 @@ impl AuthError {
         match *self {
             AuthError::InvalidUsernameOrPassword => "Invalid username or password",
             AuthError::InvalidToken => "Invalid token",
+            AuthError::CannotRegisterUser => "Cannot register user",
+            AuthError::BcyptError(_) => "Bcrypt error",
         }
     }
 }
@@ -26,6 +30,8 @@ impl error::ResponseError for AuthError {
         match *self {
             AuthError::InvalidUsernameOrPassword => StatusCode::UNAUTHORIZED,
             AuthError::InvalidToken => StatusCode::UNAUTHORIZED,
+            AuthError::CannotRegisterUser => StatusCode::INTERNAL_SERVER_ERROR,
+            AuthError::BcyptError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
