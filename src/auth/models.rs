@@ -41,9 +41,7 @@ impl Person {
         diesel::insert_into(persons::table)
             .values(&new_user)
             .get_result(conn)
-            .map_err(|err| {
-                AuthError::CannotRegisterUser
-            })
+            .map_err(|_| AuthError::CannotRegisterUser)
     }
 
     pub fn find(conn: &mut PgConnection, user_uuid: Uuid) -> Option<Person> {
@@ -55,7 +53,8 @@ impl Person {
     }
 
     pub fn login(conn: &mut PgConnection, username: &str, password: &str) -> AuthResult<Person> {
-        let user = Person::find_username(conn, username).ok_or(AuthError::InvalidUsernameOrPassword)?;
+        let user =
+            Person::find_username(conn, username).ok_or(AuthError::InvalidUsernameOrPassword)?;
         if !user.verify_password(password)? {
             return Err(AuthError::InvalidUsernameOrPassword);
         }
