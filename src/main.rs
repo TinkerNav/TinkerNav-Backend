@@ -1,51 +1,42 @@
-mod states;
-mod bots;
-mod type_sys;
-mod user;
+use actix_web::{get, middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
+use env_logger;
+mod auth;
+mod schema;
 mod config;
-use config::Config;
-use rocket::*;
-use states::TNStates;
-
-pub mod schema;
-
-fn setup_logger() -> Result<(), fern::InitError> {
-    fern::Dispatch::new()
-        .format(|out, message, record| {
-            out.finish(format_args!(
-                "{}[{}][{}] {}",
-                chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
-                record.target(),
-                record.level(),
-                message
-            ))
-        })
-        .level(::log::LevelFilter::Debug)
-        .chain(std::io::stdout())
-        .apply()?;
-    Ok(())
-}
+mod states;
+use config::CONFIG;
 
 #[get("/")]
-fn index(connections: &State<TNStates>) -> &'static str {
-    connections.nats.publish("foo.no", "JSON").expect("Failed to publish");
-    "Hello, world!"
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
 }
 
-#[launch]
-fn rocket() -> _ {
-    let config = Config::get();
-    let figment = rocket::Config::figment()
-        .merge(("address", config.host))
-        .merge(("port", config.port))
-        .merge(("workers", config.workers))
-        .merge(("secret_key", config.secret_key));
+#[post("/echo")]
+async fn echo(req_body: String) -> impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
 
-    setup_logger().expect("Failed to setup logger");
-    let states = TNStates::new();
-    rocket::custom(figment)
-        .mount("/", routes![index])
-        .mount("/person", routes![user::register, user::login, user::logout])
-        .mount("/bot", routes![bots::test])
-        .manage(states)
+async fn manual_hello() -> impl Responder {
+    HttpResponse::Ok().body("Hey there!")
+}
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    let tn_states = states::TNStates::new(&CONFIG);
+
+    let connection = web::Data::new(tn_states);
+    // access logs are printed with the INFO level so ensure it is enabled by default
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+    HttpServer::new(move || {
+        App::new()
+            .wrap(Logger::default())
+            .service(hello)
+            .service(echo)
+            .route("/hey", web::get().to(manual_hello))
+            .app_data(connection.clone())
+            .service(auth::scope())
+    })
+    .bind((CONFIG.host.clone(), CONFIG.port))?
+    .run()
+    .await
 }

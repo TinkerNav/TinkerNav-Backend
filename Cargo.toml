@@ -6,19 +6,17 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rocket = { version = "=0.5.0-rc.3", features = ["json", "secrets"] }
-bcrypt = "0.15"
-rocket_codegen = "=0.5.0-rc.3"
-nats = "0.24.0"
-log = "0.4"
-fern = "0.5"
-chrono = { version = "0.4.26", features = ["serde"] }
+actix-web = { version = "4", features = ["cookies"] }
+serde = { version = "1.0", features = ["derive"] }
+derive_more = "0.99.0"
 diesel = { version = "2.1.0", features = ["postgres", "uuid", "r2d2"] }
-uuid = { version = "1.4.0", features = ["v4", "fast-rng", "macro-diagnostics", "serde"] }
-dotenv = "0.15.0"
 r2d2-diesel = "1.0.0"
 r2d2 = "0.8.9"
-serde = "1.0.116"
-serde_derive = "1.0.116"
-serde_json = "1.0.58"
-dotenvy = "0.15.7"
+bcrypt = "0.15"
+uuid = { version = "1.4.0", features = ["v4", "fast-rng", "macro-diagnostics", "serde"] }
+nats = "0.24.0"
+env_logger = "0.10.0"
+hmac = "0.12.1"
+sha2 = "0.10.7"
+jwt = "0.16.0"
+lazy_static = "1.4.0"
