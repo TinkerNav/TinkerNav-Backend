@@ -3,6 +3,7 @@ mod errors;
 mod models;
 mod redir_middleware;
 mod token;
+mod api;
 
 use actix_web::web;
 use login::{login, logout, register};
