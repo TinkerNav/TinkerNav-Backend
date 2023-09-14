@@ -28,8 +28,4 @@ diesel::table! {
 
 diesel::joinable!(bot_api_token -> bot (bot_uuid));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    bot,
-    bot_api_token,
-    person,
-);
+diesel::allow_tables_to_appear_in_same_query!(bot, bot_api_token, person,);

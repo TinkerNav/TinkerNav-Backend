@@ -71,7 +71,7 @@ impl User for Person {
     fn get_uuid(&self) -> Uuid {
         self.uuid
     }
-    
+
     fn get_name(&self) -> &str {
         self.username.as_str()
     }
@@ -108,7 +108,6 @@ impl Bot {
         diesel::delete(crate::schema::bot::table.find(bot_uuid)).execute(conn).is_ok()
     }
 }
-
 
 #[derive(Queryable, Selectable, Debug, Insertable)]
 #[diesel(table_name = crate::schema::bot_api_token)]
