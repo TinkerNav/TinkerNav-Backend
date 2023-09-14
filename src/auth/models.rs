@@ -7,6 +7,7 @@ use uuid::Uuid;
 
 pub trait User {
     fn get_uuid(&self) -> Uuid;
+    fn get_name(&self) -> &str;
 }
 
 #[derive(Queryable, Selectable, Debug, Insertable)]
@@ -70,6 +71,10 @@ impl User for Person {
     fn get_uuid(&self) -> Uuid {
         self.uuid
     }
+    
+    fn get_name(&self) -> &str {
+        self.username.as_str()
+    }
 }
 
 #[derive(Queryable, Selectable, Debug, Insertable)]
@@ -101,5 +106,31 @@ impl Bot {
     }
     pub fn delete(conn: &mut PgConnection, bot_uuid: Uuid) -> bool {
         diesel::delete(crate::schema::bot::table.find(bot_uuid)).execute(conn).is_ok()
+    }
+}
+
+
+#[derive(Queryable, Selectable, Debug, Insertable)]
+#[diesel(table_name = crate::schema::bot_api_token)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct BotApiToken {
+    pub token: String,
+    pub uuid: Uuid,
+    pub bot_uuid: Uuid,
+}
+
+impl BotApiToken {
+    pub fn new(bot_uuid: Uuid, token: String, uuid: Uuid) -> BotApiToken {
+        BotApiToken { bot_uuid, token, uuid }
+    }
+
+    pub fn create(conn: &mut PgConnection, bot_uuid: Uuid, token: &str) -> AuthResult<BotApiToken> {
+        let bot_api_token_uuid = Uuid::new_v4();
+        let token = token.to_string();
+        let new_bot_api_token = BotApiToken { bot_uuid, token, uuid: bot_api_token_uuid };
+        diesel::insert_into(crate::schema::bot_api_token::table)
+            .values(&new_bot_api_token)
+            .get_result(conn)
+            .map_err(|_| AuthError::CannotRegisterUser)
     }
 }
