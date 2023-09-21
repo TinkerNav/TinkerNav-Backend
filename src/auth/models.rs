@@ -8,6 +8,7 @@ use uuid::Uuid;
 pub trait User {
     fn get_uuid(&self) -> Uuid;
     fn get_name(&self) -> &str;
+    fn delete(&self, conn: &mut PgConnection) -> AuthResult<bool>;
 }
 
 #[derive(Queryable, Selectable, Debug, Insertable)]
@@ -75,6 +76,10 @@ impl User for Person {
     fn get_name(&self) -> &str {
         self.username.as_str()
     }
+
+    fn delete(&self, conn: &mut PgConnection) -> AuthResult<bool> {
+        Ok(Person::delete(conn, self.uuid))
+    }
 }
 
 #[derive(Queryable, Selectable, Debug, Insertable)]
@@ -104,8 +109,26 @@ impl Bot {
     pub fn find(conn: &mut PgConnection, bot_uuid: Uuid) -> Option<Bot> {
         crate::schema::bot::table.find(bot_uuid).first(conn).ok()
     }
+
+    pub fn find_name(conn: &mut PgConnection, name: &str) -> Option<Bot> {
+        crate::schema::bot::table.filter(crate::schema::bot::name.eq(name)).first(conn).ok()
+    }
     pub fn delete(conn: &mut PgConnection, bot_uuid: Uuid) -> bool {
         diesel::delete(crate::schema::bot::table.find(bot_uuid)).execute(conn).is_ok()
+    }
+}
+
+impl User for Bot {
+    fn get_uuid(&self) -> Uuid {
+        self.uuid
+    }
+
+    fn get_name(&self) -> &str {
+        self.name.as_str()
+    }
+
+    fn delete(&self, conn: &mut PgConnection) -> AuthResult<bool> {
+        Ok(Bot::delete(conn, self.uuid))
     }
 }
 
