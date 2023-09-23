@@ -1799,6 +1799,7 @@ dependencies = [
  "nats",
  "r2d2",
  "r2d2-diesel",
+ "rand",
  "serde",
  "sha2 0.10.7",
  "uuid",

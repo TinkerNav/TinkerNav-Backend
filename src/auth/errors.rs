@@ -10,6 +10,7 @@ use derive_more::{Display, Error};
 pub enum AuthError {
     InvalidUsernameOrPassword,
     InvalidToken,
+    BotTokenNotFound,
     CannotRegisterUser,
     BcyptError(bcrypt::BcryptError),
     CannotCreateToken,
@@ -25,6 +26,7 @@ impl AuthError {
             AuthError::BcyptError(_) => "Bcrypt error",
             AuthError::CannotCreateToken => "Cannot create token",
             AuthError::UserNotFound => "User not found",
+            AuthError::BotTokenNotFound => "Bot token not found",
         }
     }
 }
@@ -38,6 +40,7 @@ impl error::ResponseError for AuthError {
             AuthError::BcyptError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AuthError::CannotCreateToken => StatusCode::INTERNAL_SERVER_ERROR,
             AuthError::UserNotFound => StatusCode::UNAUTHORIZED,
+            AuthError::BotTokenNotFound => StatusCode::BAD_REQUEST,
         }
     }
 
