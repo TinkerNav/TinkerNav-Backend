@@ -3,8 +3,8 @@ use super::errors::{AuthError, AuthResult};
 use crate::schema::person;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
-use uuid::Uuid;
 use rand::{distributions::Alphanumeric, Rng};
+use uuid::Uuid;
 
 pub trait User {
     fn get_uuid(&self) -> Uuid;
@@ -149,13 +149,11 @@ impl BotApiToken {
 
     pub fn create(conn: &mut PgConnection, bot: &Bot) -> AuthResult<BotApiToken> {
         let bot_api_token_uuid = Uuid::new_v4();
-        let token: String = rand::thread_rng()
-            .sample_iter(&Alphanumeric)
-            .take(7)
-            .map(char::from)
-            .collect();
+        let token: String =
+            rand::thread_rng().sample_iter(&Alphanumeric).take(7).map(char::from).collect();
         let new_bot_uuid = bot.get_uuid();
-        let new_bot_api_token = BotApiToken { bot_uuid : new_bot_uuid, token, uuid: bot_api_token_uuid };
+        let new_bot_api_token =
+            BotApiToken { bot_uuid: new_bot_uuid, token, uuid: bot_api_token_uuid };
         diesel::insert_into(crate::schema::bot_api_token::table)
             .values(&new_bot_api_token)
             .get_result(conn)
@@ -185,12 +183,10 @@ impl BotApiToken {
     }
 
     pub fn rotate(conn: &mut PgConnection, bot_api_token_uuid: &Uuid) -> AuthResult<BotApiToken> {
-        let bot_api_token = BotApiToken::find(conn, bot_api_token_uuid).ok_or(AuthError::UserNotFound)?;
-        let new_token: String = rand::thread_rng()
-            .sample_iter(&Alphanumeric)
-            .take(7)
-            .map(char::from)
-            .collect();
+        let bot_api_token =
+            BotApiToken::find(conn, bot_api_token_uuid).ok_or(AuthError::UserNotFound)?;
+        let new_token: String =
+            rand::thread_rng().sample_iter(&Alphanumeric).take(7).map(char::from).collect();
         diesel::update(crate::schema::bot_api_token::table.find(bot_api_token_uuid))
             .set(crate::schema::bot_api_token::token.eq(new_token))
             .get_result(conn)

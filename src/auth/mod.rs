@@ -6,8 +6,8 @@ mod token;
 mod api;
 
 use actix_web::web;
-use login::{login, logout, register};
 use api::{create_bot, delete_bot};
+use login::{login, logout, register};
 
 pub fn scope() -> actix_web::Scope {
     web::scope("/auth")
