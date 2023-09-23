@@ -13,7 +13,7 @@ pub fn scope() -> actix_web::Scope {
     web::scope("/auth")
         .service(web::resource("/person/login").route(web::post().to(login)))
         .service(web::resource("/person/logout").route(web::post().to(logout)))
-        .service(web::resource("/person").route(web::post().to(register)))
-        .service(web::resource("/bot").route(web::post().to(api::create_bot)))
-        .service(web::resource("/bot").route(web::delete().to(api::delete_bot)))
+        .service(web::resource("/person/registry").route(web::post().to(register)))
+        .service(web::resource("/bot/registry").route(web::post().to(api::create_bot)))
+        .service(web::resource("/bot/registry").route(web::delete().to(api::delete_bot)))
 }

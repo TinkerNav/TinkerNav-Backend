@@ -155,4 +155,11 @@ impl BotApiToken {
             .get_result(conn)
             .map_err(|_| AuthError::CannotRegisterUser)
     }
+
+    pub fn find_token(conn: &mut PgConnection, token: &str) -> Option<BotApiToken> {
+        crate::schema::bot_api_token::table
+            .filter(crate::schema::bot_api_token::token.eq(token))
+            .first(conn)
+            .ok()
+    }
 }

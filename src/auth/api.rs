@@ -1,5 +1,5 @@
 use super::errors::{AuthError, AuthResult};
-use super::models::{User, Bot};
+use super::models::{User, Bot, BotApiToken};
 use super::token::{generate_cookie, generate_token};
 use crate::states::TNStates;
 use actix_web::{
@@ -52,3 +52,12 @@ pub async fn delete_bot(
     }))
 }
 
+async fn authenticate(
+    states: Data<TNStates>,
+    token: &String,
+) -> AuthResult<Bot> {
+    let connection = &mut states.get_db_pool().get().unwrap();
+    let bot_api_token = BotApiToken::find_token(connection, token).ok_or(AuthError::InvalidToken)?;
+    let bot = Bot::find(connection, bot_api_token.bot_uuid).ok_or(AuthError::InvalidToken)?;
+    Ok(bot)
+}
