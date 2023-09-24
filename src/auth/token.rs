@@ -7,10 +7,11 @@ use jwt::{SignWithKey, VerifyWithKey};
 use sha2::Sha256;
 use std::collections::BTreeMap;
 use uuid::Uuid;
+use actix_web::web::Data;
+use crate::states::TNStates;
 
-pub fn generate_token(user: &dyn User) -> AuthResult<String> {
-    let key: Hmac<Sha256> =
-        Hmac::new_from_slice(CONFIG.jwt_secret.as_bytes()).expect("HMAC Key Error");
+pub fn generate_token(states: &Data<TNStates>, user: &dyn User) -> AuthResult<String> {
+    let key = states.token_generation_key.lock();
     let mut claims = BTreeMap::new();
     claims.insert("uuid", user.get_uuid().to_string());
     let token_str = claims.sign_with_key(&key).map_err(|_| AuthError::CannotCreateToken)?;
