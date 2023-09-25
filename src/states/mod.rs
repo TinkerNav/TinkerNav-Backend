@@ -8,6 +8,7 @@ use std::sync::Mutex;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 use once_cell::sync::OnceCell;
+use crate::config::CONFIG;
 
 // TNStates manages the general states between the accesses.
 // Note that TN Backend is generally a STATELESS application and the TNStates here only manages the necessary states (such as DB connection pools).
@@ -34,7 +35,7 @@ pub struct StaticTNStates {
 
 impl StaticTNStates {
     pub fn new() -> StaticTNStates{
-        let key = Hmac::<Sha256>::new_from_slice(b"secret").unwrap();
+        let key = Hmac::<Sha256>::new_from_slice(CONFIG().jwt_secret.as_bytes()).unwrap();
         StaticTNStates { token_generation_key: key }
     }
 }
