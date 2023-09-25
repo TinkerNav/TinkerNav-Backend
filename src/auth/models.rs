@@ -183,8 +183,7 @@ impl BotApiToken {
     }
 
     pub fn rotate(conn: &mut PgConnection, bot_api_token_uuid: &Uuid) -> AuthResult<BotApiToken> {
-        let _ =
-            BotApiToken::find(conn, bot_api_token_uuid).ok_or(AuthError::UserNotFound)?;
+        let _ = BotApiToken::find(conn, bot_api_token_uuid).ok_or(AuthError::UserNotFound)?;
         let new_token: String =
             rand::thread_rng().sample_iter(&Alphanumeric).take(7).map(char::from).collect();
         diesel::update(crate::schema::bot_api_token::table.find(bot_api_token_uuid))

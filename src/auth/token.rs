@@ -1,10 +1,10 @@
 use super::errors::{AuthError, AuthResult};
 use super::models::User;
+use crate::states::STATIC_STATES;
 use actix_web::cookie::Cookie;
 use jwt::{SignWithKey, VerifyWithKey};
 use std::collections::BTreeMap;
 use uuid::Uuid;
-use crate::states::STATIC_STATES;
 
 pub fn generate_token(user: &dyn User) -> AuthResult<String> {
     let key = &STATIC_STATES().token_generation_key;

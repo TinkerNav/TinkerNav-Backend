@@ -2,7 +2,8 @@ use super::errors::{AuthError, AuthResult};
 use super::models::{Bot, BotApiToken, User};
 use crate::states::TNStates;
 use actix_web::{
-    web::{Data, Form, Json}, Responder,
+    web::{Data, Form, Json},
+    Responder,
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
