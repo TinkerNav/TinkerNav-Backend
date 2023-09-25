@@ -7,7 +7,7 @@ pub use nats_connection::establish_connection;
 use std::sync::Mutex;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
-use lazy_static::lazy_static;
+use once_cell::sync::OnceCell;
 
 // TNStates manages the general states between the accesses.
 // Note that TN Backend is generally a STATELESS application and the TNStates here only manages the necessary states (such as DB connection pools).
@@ -32,8 +32,15 @@ pub struct StaticTNStates {
     pub token_generation_key: Hmac<Sha256>,
 }
 
-lazy_static! {
-    pub static ref STATIC_STATES: StaticTNStates = StaticTNStates {
-        token_generation_key: Hmac::new_from_slice(&Config::get().jwt_secret.as_bytes()).expect("HMAC can take key of any size")
-    };
+impl StaticTNStates {
+    pub fn new() -> StaticTNStates{
+        let key = Hmac::<Sha256>::new_from_slice(b"secret").unwrap();
+        StaticTNStates { token_generation_key: key }
+    }
+}
+
+static _STATIC_STATES: OnceCell<StaticTNStates> = OnceCell::new();
+
+pub fn STATIC_STATES() -> &'static StaticTNStates {
+    _STATIC_STATES.get_or_init(|| StaticTNStates::new())
 }

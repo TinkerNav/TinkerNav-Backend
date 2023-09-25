@@ -32,7 +32,7 @@ pub async fn login(
     let password = login_data.password;
     let connection = &mut states.get_db_pool().get().unwrap();
     let person = Person::login(connection, &username, &password)?;
-    let token = generate_token(&states, &person)?;
+    let token = generate_token(&person)?;
     let cookie = generate_cookie(token);
     Ok(HttpResponse::Ok().cookie(cookie).body("Logged in"))
 }
