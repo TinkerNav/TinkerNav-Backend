@@ -183,7 +183,7 @@ impl BotApiToken {
     }
 
     pub fn rotate(conn: &mut PgConnection, bot_api_token_uuid: &Uuid) -> AuthResult<BotApiToken> {
-        let bot_api_token =
+        let _ =
             BotApiToken::find(conn, bot_api_token_uuid).ok_or(AuthError::UserNotFound)?;
         let new_token: String =
             rand::thread_rng().sample_iter(&Alphanumeric).take(7).map(char::from).collect();

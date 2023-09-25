@@ -1,13 +1,10 @@
 use super::errors::{AuthError, AuthResult};
 use super::models::User;
 use actix_web::cookie::Cookie;
-use hmac::{Hmac, Mac};
 use jwt::{SignWithKey, VerifyWithKey};
-use sha2::Sha256;
 use std::collections::BTreeMap;
 use uuid::Uuid;
-use actix_web::web::Data;
-use crate::states::{TNStates, STATIC_STATES};
+use crate::states::STATIC_STATES;
 
 pub fn generate_token(user: &dyn User) -> AuthResult<String> {
     let key = &STATIC_STATES().token_generation_key;
