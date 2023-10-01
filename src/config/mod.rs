@@ -17,10 +17,9 @@ impl Config {
         Config {
             host: "127.0.0.1".to_string(),
             port: 8080,
-            postgres_url: std::env::var("POSTGRES_URL").unwrap_or("postgres://postgres:changeme@localhost:5432".to_string()),
-            // postgres_url: "postgres://postgres:changeme@localhost:5432".to_string(),
+            postgres_url: std::env::var("POSTGRES_URL")
+                .unwrap_or("postgres://postgres:changeme@localhost:5432".to_string()),
             nats_url: std::env::var("NATS_URL").unwrap_or("localhost:4222".to_string()),
-            // nats_url: "localhost:4222".to_string(),
             jwt_secret: "very-very-secure-secrete".to_string(),
         }
     }
