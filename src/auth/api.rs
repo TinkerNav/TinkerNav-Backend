@@ -79,6 +79,8 @@ pub async fn delete_bot_token(
     Ok(Json(CreateBotTokenResponse { uuid: token.uuid, token: token.token }))
 }
 
+// TODO: Authenticate Not Called
+#[allow(dead_code)]
 async fn authenticate(states: Data<TNStates>, token: &String) -> AuthResult<Bot> {
     let connection = &mut states.get_db_pool().get().unwrap();
     let bot_api_token =

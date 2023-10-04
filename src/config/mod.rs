@@ -57,6 +57,7 @@ impl Config {
 
 static _CONFIG: OnceCell<Config> = OnceCell::new();
 
+#[allow(non_snake_case)]
 pub fn CONFIG() -> &'static Config {
     _CONFIG.get_or_init(|| Config::get())
 }

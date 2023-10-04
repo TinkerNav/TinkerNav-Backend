@@ -42,6 +42,7 @@ impl StaticTNStates {
 
 static _STATIC_STATES: OnceCell<StaticTNStates> = OnceCell::new();
 
+#[allow(non_snake_case)]
 pub fn STATIC_STATES() -> &'static StaticTNStates {
     _STATIC_STATES.get_or_init(|| StaticTNStates::new())
 }
