@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    environment:
+      - POSTGRES_URL=postgres://postgres:changeme@postgres:5432
+      - NATS_URL=nats:4222
+    networks:
+      - tinker-nav
+    volumes:
+      - ..:/app
+    command: /bin/sh -c "while sleep 1000; do :; done"
+
+  nats:
+    build:
+      context: ../../TinkerNav-Config/nats
+    ports:
+      - 4222:4222
+      - 4443:4443
+      - 6222:6222
+    networks:
+      - tinker-nav
+    restart: unless-stopped
+
+  postgres:
+    build:
+      context: ../../TinkerNav-Config/postgres/
+    command: postgres -c logging_collector=on -c log_destination=stderr -c log_directory=/logs
+    volumes:
+      - postgresVolume:/var/lib/postgresql/data
+      - ../../TinkerNav-Config/postgres/postgresql.conf:/var/lib/postgressql/data/postgresql.conf
+      - ../../TinkerNav-Config/logs:/logs
+    environment:
+      # Provide the password via an environment variable. If the variable is unset or empty, use a default password
+      # Explanation of this shell feature: https://unix.stackexchange.com/questions/122845/using-a-b-for-variable-assignment-in-scripts/122848#122848
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+    ports:
+      - 5432:5432
+    networks:
+      - tinker-nav
+    restart: unless-stopped
+
+networks:
+  tinker-nav:
+    driver: bridge
+
+volumes:
+  postgresVolume:
+
