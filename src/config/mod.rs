@@ -5,7 +5,7 @@ pub struct Config {
     pub nats_url: String,
     pub jwt_secret: String,
 }
-use lazy_static::lazy_static;
+use once_cell::sync::OnceCell;
 
 pub enum Env {
     Development,
@@ -55,6 +55,8 @@ impl Config {
     }
 }
 
-lazy_static! {
-    pub static ref CONFIG: Config = Config::get();
+static _CONFIG: OnceCell<Config> = OnceCell::new();
+
+pub fn CONFIG() -> &'static Config {
+    _CONFIG.get_or_init(|| Config::get())
 }
