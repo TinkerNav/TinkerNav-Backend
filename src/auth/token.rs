@@ -14,6 +14,7 @@ pub fn generate_token(user: &dyn User) -> AuthResult<String> {
     Ok(token_str)
 }
 
+#[allow(dead_code)]
 pub fn current_user_person(token: String) -> AuthResult<Uuid> {
     let key = &STATIC_STATES().token_generation_key;
     let claims: BTreeMap<String, String> =
