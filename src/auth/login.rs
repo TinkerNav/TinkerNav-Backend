@@ -54,6 +54,8 @@ pub async fn register(
     Ok(Json(PersonResponse { username: person.username }))
 }
 
+// TODO: Implement change password
+#[allow(dead_code)]
 pub async fn change_password() -> AuthResult<impl Responder> {
     if false {
         return Err(AuthError::InvalidToken);
